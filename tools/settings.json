@@ -1,0 +1,12 @@
+{
+  "c libraries to compile": [
+    "",
+    "",
+    ""
+  ],
+  "cpp libraries to compile": [
+    "",
+    "",
+    ""
+  ]
+}
