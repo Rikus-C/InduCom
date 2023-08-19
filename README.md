@@ -1,5 +1,5 @@
 # Welcome to the InduCom wiki!
-![unnamed](https://github.com/Rikus-C/InduCom/assets/142307272/5c3de3dc-cb8f-4345-9643-9f1c44142e5c)
+![unnamed](https://github.com/Rikus-C/InduCom/assets/142307272/50fbd3ee-c41a-4bf9-adca-817eeb238ba5)
 ## Short Summary
 InduCom is short for Industrial Communication. As the name implies, InduCom is a framework, written in C, that makes applying industrial communication protocols easy, reliable and inexpensive. It does so by giving you access to a set of tools that allow for seamless integration of all major communication systems used in industrial environments.
 
