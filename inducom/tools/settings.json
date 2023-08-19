@@ -1,0 +1,11 @@
+{
+  "c libraries to compile": [
+    "./c_libraries/delays/",
+    "./c_libraries/hash_map/",
+    "./c_libraries/threading/",
+    "./c_libraries/tcp_socket/",
+    "./c_libraries/udb_socket/",
+    "./c_libraries/linked_list/",
+    "./c_libraries/date_and_time/"
+  ]
+}
