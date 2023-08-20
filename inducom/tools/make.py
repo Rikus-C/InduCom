@@ -8,7 +8,7 @@ json_file       = open('./settings.json', 'r')
 settings        = json.load(json_file)
 directories     = settings["c libraries to compile"]
 bin_folder      = "../bin/"
-exe_name        = "c_libraries"
+exe_name        = "inducom"
 command         = "gcc -g -O -Wall "
 files           = []
 
