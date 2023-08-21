@@ -1,35 +1,28 @@
 #include "./tcp_client.h"
 
-bool ConnectToServerTCP() {
-  // Create socket
+void DisconnectFromServer(_tcpClient* thisClient){
+  close(thisClient->client_socket);
+}
+
+bool ConnectToServerTCP(_tcpClient*, const char* frame, int port , int timeout) {
   client_socket = socket(AF_INET, SOCK_STREAM, 0);
   if(client_socket == -1){
     perror("Error creating socket");
     exit(EXIT_FAILURE);
   }
-
-  // Setup server address structure
   memset(&server_addr, 0, sizeof(server_addr));
   server_addr.sin_family = AF_INET;
-  server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");  // Server IP address
-  server_addr.sin_port = htons(12345);  // Server port number
-
-  // Connect to the server
+  server_addr.sin_addr.s_addr = inet_addr(frame); 
+  server_addr.sin_port = htons(port);  
   if(connect(client_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1){
     perror("Error connecting to server");
     exit(EXIT_FAILURE);
   }
-
-  printf("Connected to server.\n");
-
-  close(client_socket);
-
-  return 0;
+  return true;
 }
 
-bool SendMessageTCP(){
+bool SendMessageTCP(_tcpClient*, const char*, int){
    send(client_socket, message, strlen(message), 0);
-
     if (strcmp(message, "exit\n") == 0) {
       printf("Client exiting.\n");
       break;
