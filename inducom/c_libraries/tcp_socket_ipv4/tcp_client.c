@@ -1,66 +1,61 @@
 #include "./tcp_client.h"
 
 void DisconnectFromServer(_tcpClient* thisClient){
+  thisClient->connected = false;
   close(thisClient->client_socket);
 }
 
-bool ConnectToServerTCP(_tcpClient*, const char* frame, int port , int timeout) {
-  client_socket = socket(AF_INET, SOCK_STREAM, 0);
-  timeoutThread = thread([&timeoutTime, this]{
-    while (this->timeoutCounter < timeoutTime){
-      this->timeoutChecker.milliSeconds(1);
-      this->timeoutCounter++;
-    }
-    if (!this->connectionDone){
-      shutdown(this->sock, SHUT_RDWR);
-      this->connectionFailed = true;
-    } 
-  });
-  if(client_socket == -1){
-    perror("Error creating socket");
-    exit(EXIT_FAILURE);
-  }
-  memset(&server_addr, 0, sizeof(server_addr));
-  server_addr.sin_family = AF_INET;
-  server_addr.sin_addr.s_addr = inet_addr(frame); 
-  server_addr.sin_port = htons(port);  
-  if(connect(client_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1){
-    perror("Error connecting to server");
-    exit(EXIT_FAILURE);
-  }
-  return true;
-
-  /*
-  TEST:
-  this->connectionDone    = false;
-  this->connectionFailed  = false;
-  this->currentTime       = 0;
-  this->timeoutCounter    = 0;
-  this->timeoutThread = thread([&timeoutTime, this]{
-    while (this->timeoutCounter < timeoutTime){
-      this->timeoutChecker.milliSeconds(1);
-      this->timeoutCounter++;
-    }
-    if (!this->connectionDone){
-      shutdown(this->sock, SHUT_RDWR);
-      this->connectionFailed = true;
-    } 
-  });
-  this->connectThread = thread([&IP, &PORT, &timeoutTime, this] {       
-
-    this->Connect(&IP, PORT);
-    this->connectionDone = true;
-    this->timeoutCounter = timeoutTime;
-  });
-  timeoutThread.join();
-  connectThread.join();
-  if(connectionFailed)
-    goto TEST;  
-  this->connected = true;
-  */
+void* Connect(void* thisClientArgs){ 
+  TRY_CONNECT: if(thisC->stopThreads) pthread_exit(NULL);
+  thisC->server_addr.sin_family = AF_INET;
+  thisC->server_addr.sin_addr.s_addr = inet_addr(thisC->ip); 
+  thisC->server_addr.sin_port = htons(thisC->port);  
+  int result = connect(thisC->client_socket,
+  (struct sockaddr*)&thisC->server_addr, sizeof(thisC->server_addr));
+  if (result == -1) thisC->connected = false;
+  else thisC->connected = true;
+  if(thisC->client_socket == -1){
+    delayMilliSeconds(10);
+    goto TRY_CONNECT;
+  }pthread_exit(NULL);
 }
 
-bool SendMessageTCP(_tcpClient*, const char*, int){
+void* Timeout(void* thisClientArgs){
+  while(thisC->timeoutCounter < thisC->timeoutLimit){
+    if(thisC->stopThreads) pthread_exit(NULL);
+    delayMilliSeconds(1);
+    thisC->timeoutCounter++;
+  }if(!thisC->connected)
+    DisconnectFromServer(thisC);
+  pthread_exit(NULL);
+}
+
+void KillThreads(_tcpClient* thisClient){
+  thisClient->stopThreads = true;
+  pthread_join(*thisClient->connectThread, NULL);
+  pthread_join(*thisClient->timeoutThread, NULL);
+}
+
+void ConnectToServerTCP(_tcpClient* thisClient, const char* ip, int port , int timeout) {
+  CONNECT: thisClient->connected = false;
+  thisClient->stopThreads = false;
+  thisClient->timeoutCounter = 0;
+  thisClient->timeoutLimit = timeout;
+  thisClient->ip = ip; thisClient->port = port;
+  thisClient->client_socket = socket(AF_INET, SOCK_STREAM, 0);
+  pthread_create(thisClient->timeoutThread, NULL, Timeout, (void*)thisClient);
+  pthread_create(thisClient->connectThread, NULL, Connect, (void*)thisClient);
+  while((thisClient->connected == false)&& 
+  (thisClient->timeoutCounter < thisClient->timeoutLimit)) 
+    delayMilliSeconds(10);
+  if(!thisClient->connected){ 
+    KillThreads(thisClient);
+    thisClient->stopThreads = false;
+    goto CONNECT;
+  }KillThreads(thisClient);
+}
+
+/*int SendMessageTCP(_tcpClient*, const char*, int, int){
    send(client_socket, message, strlen(message), 0);
     if (strcmp(message, "exit\n") == 0) {
       printf("Client exiting.\n");
@@ -74,7 +69,7 @@ bool SendMessageTCP(_tcpClient*, const char*, int){
     }
     message[bytes_received] = '\0';
     printf("Received from server: %s", message);
-    /*
+
     (void)send(this->sock, msg->c_str(), msg->size(), 0);  
   if (!response) return true; 
   this->receiveFailed = false;
@@ -104,6 +99,6 @@ bool SendMessageTCP(_tcpClient*, const char*, int){
   this->receiveThread.join(); 
   if (receiveFailed) return false;
   return true;
-  */
-}
+
+}*/
 

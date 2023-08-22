@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-int main() {
+/*int main() {
     int client_socket;
     struct sockaddr_in server_addr;
     char message[1024];
@@ -48,5 +48,5 @@ int main() {
     close(client_socket);
 
     return 0;
-}
+}*/
 

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,15 +7,29 @@
 #include <pthread.h>
 #include <arpa/inet.h>
 
-typedef struct _tcpClient{
+#include "../delays/delay.h"
+#include "../../macros/basic_macros.h"
+
+#define thisC ((_tcpClient*)thisClientArgs) 
+
+typedef struct _tcpClient{ 
+  int port;
+  int connected;
+  const char* ip;
+  int stopThreads;
+  int timeoutLimit;
+  char buffer[1024];
   int client_socket;
   int timeoutCounter;
+  const char* message;
+  pthread_t* timeoutThread;
+  pthread_t* connectThread;
   struct sockaddr_in server_addr;
-  char message[1024]; 
-  bool connected;
-  p_thread timeoutThread;
 }_tcpClient;
 
-bool ConnectToServerTCP(_tcpClient*, const char*, int, int);
-bool SendMessageTCP(_tcpClient*, const char*, int);
+void* Connect(void*);
+void* Timeout(void*);
+void KillThreads(_tcpClient*);
+void ConnectToServerTCP(_tcpClient*, const char*, int, int);
+int SendMessageTCP(_tcpClient*, const char*, int, int);
 void DisconnectFromServerTCP(_tcpClient*);
