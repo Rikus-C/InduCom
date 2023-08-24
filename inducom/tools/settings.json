@@ -1,5 +1,6 @@
 {
   "c libraries to compile": [
+    "../../source/",
     "../c_libraries/delays/",
     "../c_libraries/sqlite3/",
     "../c_libraries/can_bus/",

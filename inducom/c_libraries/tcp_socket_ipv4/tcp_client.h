@@ -17,18 +17,19 @@ typedef struct _tcpClient{
   int connected;
   const char* ip;
   int stopThreads;
+  ssize_t received;
   int timeoutLimit;
   char buffer[1024];
   int client_socket;
   int timeoutCounter;
-  const char* message;
-  pthread_t* timeoutThread;
-  pthread_t* connectThread;
+  pthread_t timeoutThread;
+  pthread_t connectThread;
   struct sockaddr_in server_addr;
 }_tcpClient;
 
 void* Connect(void*);
 void* Timeout(void*);
+void* ReceiveResponse(void*);
 void KillThreads(_tcpClient*);
 void ConnectToServerTCP(_tcpClient*, const char*, int, int);
 int SendMessageTCP(_tcpClient*, const char*, int, int);

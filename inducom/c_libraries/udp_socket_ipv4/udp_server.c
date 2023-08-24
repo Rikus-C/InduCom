@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-int main() {
+/*int main() {
     int server_socket;
     struct sockaddr_in server_addr, client_addr;
     socklen_t client_addr_size;
@@ -54,4 +54,4 @@ int main() {
     close(server_socket);
 
     return 0;
-}
+}*/

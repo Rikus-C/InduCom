@@ -9,7 +9,7 @@ settings        = json.load(json_file)
 directories     = settings["c libraries to compile"]
 bin_folder      = "../bin/"
 exe_name        = "inducom"
-command         = "gcc -g -O -Wall "
+command         = "gcc -g -O -Wall -lpthread "
 files           = []
 
 for current_dir in directories :
