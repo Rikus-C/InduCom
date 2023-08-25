@@ -26,7 +26,7 @@ def main():
                 print(f"Received: {message}")
                 
                 response = f"Server received: {message}"
-                client_socket.send(response.encode('utf-8'))  # Send response to client
+                #client_socket.send(response.encode('utf-8'))  # Send response to client
         except Exception as e:
             print(f"Error: {e}")
         finally:

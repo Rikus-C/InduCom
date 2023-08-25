@@ -14,23 +14,28 @@
 
 typedef struct _tcpClient{ 
   int port;
-  int connected;
+  int received;
+  int connected; 
   const char* ip;
   int stopThreads;
-  ssize_t received;
   int timeoutLimit;
   char buffer[1024];
+  int doneReceiving;
   int client_socket;
-  int timeoutCounter;
-  pthread_t timeoutThread;
+  int timeoutCounter;  
   pthread_t connectThread;
+  pthread_t receiveThread;
+  pthread_t timeoutThreadCon;
+  pthread_t timeoutThreadRec;
   struct sockaddr_in server_addr;
 }_tcpClient;
 
 void* Connect(void*);
-void* Timeout(void*);
-void* ReceiveResponse(void*);
-void KillThreads(_tcpClient*);
+void* Receive(void*);
+void* ConnectTimeout(void*);
+void* ReceiveTimeout(void*);
+void KillConnectThreads(_tcpClient*);
+void KillReceiveThreads(_tcpClient*);
 void ConnectToServerTCP(_tcpClient*, const char*, int, int);
 int SendMessageTCP(_tcpClient*, const char*, int, int);
 void DisconnectFromServerTCP(_tcpClient*);
