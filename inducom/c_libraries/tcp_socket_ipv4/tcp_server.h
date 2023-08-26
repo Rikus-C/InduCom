@@ -11,10 +11,13 @@
 
 typedef struct _tcpServer{
   char buffer[BUFFER_SIZE];
- _list* bufferList; 
+  _list* bufferList; 
+  int bufferListsize;
+  pthread_t processBufferThread;
+  pthread_t receiveMessageThread;
 
 }_tcpServer;
 
 void KillServer(_tcpServer*);
-void ListenForMessages(void*);
+void ListenForRequests(void*);
 int InitiateServer(_tcpServer*, const char*, int, void*);

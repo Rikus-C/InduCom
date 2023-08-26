@@ -10,6 +10,7 @@
 #include "../delays/delay.h"
 #include "../../macros/basic_macros.h"
 
+#define BUFFER_SIZE 1024
 #define thisC ((_tcpClient*)thisClientArgs) 
 
 typedef struct _tcpClient{ 
@@ -18,13 +19,13 @@ typedef struct _tcpClient{
   int connected; 
   const char* ip;
   int stopThreads;
-  int timeoutLimit;
-  char buffer[1024];
+  int timeoutLimit; 
   int doneReceiving;
   int client_socket;
   int timeoutCounter;  
   pthread_t connectThread;
   pthread_t receiveThread;
+  char buffer[BUFFER_SIZE];
   pthread_t timeoutThreadCon;
   pthread_t timeoutThreadRec;
   struct sockaddr_in server_addr;

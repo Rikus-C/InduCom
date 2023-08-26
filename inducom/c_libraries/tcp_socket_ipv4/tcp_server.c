@@ -2,7 +2,7 @@
 
 void KillServer(_tcpServer* thisServer){}
 
-void ListenforMessages(void* Callback){}
+void ListenforRequests(void* Callback){}
 
 int InitiateServer(_tcpServer* thisServer, const char* ip, int port, void* Callback) {
   int server_socket, client_socket;

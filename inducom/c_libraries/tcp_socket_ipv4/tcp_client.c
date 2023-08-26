@@ -5,7 +5,7 @@ void DisconnectFromServerTCP(_tcpClient* thisClient){
   close(thisClient->client_socket);
 }
 
-void* Receive(void* thisClientArgs){
+void* Receive(void* thisClientArgs){ 
   ssize_t recSize = recv(thisC->client_socket, thisC->buffer, sizeof(thisC->buffer), 0);
   if (recSize <= 0) pthread_exit(NULL);
   thisC->doneReceiving = true;
@@ -51,7 +51,7 @@ void KillConnectThreads(_tcpClient* thisClient){
 
 void KillReceiveThreads(_tcpClient* thisClient){
   thisClient->stopThreads = true;
-  //pthread_join(thisClient->receiveThread, NULL);
+  //pthread_join(thisClient->receiveThread, NULL);// i dont have a way to kill this thread yet for when it gets stuck
   pthread_join(thisClient->timeoutThreadRec, NULL);
 
 }
@@ -87,7 +87,7 @@ int SendMessageTCP(_tcpClient* thisClient, const char* message, int boolWait, in
   while((thisClient->doneReceiving == false)&& 
   (thisClient->timeoutCounter < thisClient->timeoutLimit)) 
     delayMilliSeconds(10);
-  KillConnectThreads(thisClient);
+  KillReceiveThreads(thisClient);
   return thisClient->doneReceiving;
 }
 
